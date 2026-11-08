@@ -1,4 +1,4 @@
-name: Build Learnrithm Image
+name: Build Learnrithm Image (personal GHCR)
 
 on:
   push:
@@ -39,6 +39,6 @@ jobs:
           context: .
           platforms: linux/amd64
           push: true
-          tags: ghcr.io/learnrithmai/docuseal:learnrithm
+          tags: ghcr.io/chuchu2005/docuseal:learnrithm
           cache-from: type=gha
           cache-to: type=gha,mode=max
