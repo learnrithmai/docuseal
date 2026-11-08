@@ -1,0 +1,44 @@
+name: Build Learnrithm Image
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - "app/**"
+      - "config/**"
+      - "lib/**"
+      - "Dockerfile"
+      - ".github/workflows/learnrithm-image.yml"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Create .version file
+        run: echo "learnrithm-$(git rev-parse --short HEAD)" > .version
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64
+          push: true
+          tags: ghcr.io/learnrithmai/docuseal:learnrithm
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
